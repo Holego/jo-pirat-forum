@@ -1,0 +1,38 @@
+{% extends 'board/base.html' %}
+{% block content %}
+<table class="forum-table">
+    <thead>
+        <tr>
+            <th class="col-main">Категория</th>
+            <th class="col-num">Темы</th>
+            <th class="col-num">Сообщения</th>
+            <th class="col-last">Последнее сообщение</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for category in categories %}
+        <tr>
+            <td class="col-main">
+                <a href="{{ category.get_absolute_url }}" class="cat-name">{{ category.name }}</a>
+                {% if category.description %}<div class="cat-desc">{{ category.description }}</div>{% endif %}
+            </td>
+            <td class="col-num">{{ category.topic_count }}</td>
+            <td class="col-num">{{ category.post_count }}</td>
+            <td class="col-last">
+                {% with last=category.last_post %}
+                    {% if last %}
+                        <a href="{{ last.topic.get_absolute_url }}">{{ last.topic.title|truncatechars:40 }}</a><br>
+                        {{ last.created_at|date:"d M Y H:i" }}<br>
+                        <span class="by">{{ last.author.username }}</span>
+                    {% else %}
+                        <span class="empty">&mdash;</span>
+                    {% endif %}
+                {% endwith %}
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="4">Категорий пока нет.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

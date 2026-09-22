@@ -1,0 +1,43 @@
+{% extends 'board/base.html' %}
+{% block content %}
+<div class="breadcrumbs"><a href="{% url 'index' %}">Форум</a> &raquo; {{ category.name }}</div>
+
+<div class="actions-row">
+    {% if user.is_authenticated %}
+        <a class="btn" href="{% url 'new_topic' category.slug %}">+ Новая тема</a>
+    {% else %}
+        <a class="btn" href="{% url 'login' %}">Войдите, чтобы создать тему</a>
+    {% endif %}
+</div>
+
+<table class="forum-table">
+    <thead>
+        <tr>
+            <th class="col-main">Тема</th>
+            <th class="col-num">Ответы</th>
+            <th class="col-last">Последнее сообщение</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for topic in topics %}
+        <tr>
+            <td class="col-main">
+                {% if topic.is_pinned %}<span class="pin">Закреплено</span>{% endif %}
+                <a href="{{ topic.get_absolute_url }}" class="topic-title">{{ topic.title }}</a>
+                {% if topic.project_url %}<a href="{{ topic.project_url }}" class="project-link" target="_blank" rel="noopener">проект &rarr;</a>{% endif %}
+                <div class="cat-desc">автор {{ topic.author.username }}</div>
+            </td>
+            <td class="col-num">{{ topic.reply_count }}</td>
+            <td class="col-last">
+                {% with last=topic.last_post %}
+                    {{ last.created_at|date:"d M Y H:i" }}<br>
+                    <span class="by">{{ last.author.username }}</span>
+                {% endwith %}
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="3">В этой категории пока нет тем. Будьте первым!</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

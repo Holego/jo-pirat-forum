@@ -1,0 +1,130 @@
+* { box-sizing: border-box; }
+body {
+    margin: 0;
+    font-family: Verdana, Arial, sans-serif;
+    font-size: 13px;
+    color: #333;
+    background: #e9edf5 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Crect width='4' height='4' fill='%23e9edf5'/%3E%3C/svg%3E");
+}
+.wrapper { max-width: 1000px; margin: 0 auto; padding: 12px; }
+
+.site-header {
+    background: linear-gradient(#3b6ea5, #1f4e79);
+    border: 1px solid #14324f;
+    border-radius: 4px 4px 0 0;
+    padding: 14px 18px;
+}
+.logo { display: flex; align-items: center; gap: 12px; text-decoration: none; color: #fff; }
+.logo-icon { font-size: 32px; }
+.logo-text strong { display: block; font-size: 22px; }
+.logo-text small { color: #cfe0f2; }
+
+.topbar {
+    background: #d8c9a3;
+    border: 1px solid #b8a677;
+    border-top: none;
+    padding: 6px 14px;
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    font-weight: bold;
+}
+.topbar a, .topbar .link-button {
+    color: #1f4e79;
+    text-decoration: none;
+}
+.topbar a:hover, .topbar .link-button:hover { text-decoration: underline; }
+.topbar-user { margin-left: auto; font-weight: normal; color: #4a3f26; }
+.inline-form { display: inline; margin-left: auto; }
+.link-button {
+    background: none; border: none; padding: 0; font: inherit; cursor: pointer;
+}
+
+.content {
+    background: #fdfcf8;
+    border: 1px solid #b8a677;
+    border-top: none;
+    padding: 16px;
+}
+
+.forum-table { width: 100%; border-collapse: collapse; }
+.forum-table thead th {
+    background: #6f8f3f;
+    color: #fff;
+    text-align: left;
+    padding: 6px 10px;
+}
+.forum-table td {
+    padding: 8px 10px;
+    border-bottom: 1px solid #e3dcc6;
+    vertical-align: top;
+}
+.forum-table tbody tr:nth-child(odd) { background: #f3efe0; }
+.forum-table tbody tr:hover { background: #eaf1db; }
+.col-num { width: 90px; text-align: center; white-space: nowrap; }
+.col-last { width: 220px; font-size: 12px; color: #555; }
+.cat-name, .topic-title { font-weight: bold; color: #1f4e79; text-decoration: none; font-size: 14px; }
+.cat-name:hover, .topic-title:hover { text-decoration: underline; }
+.cat-desc { color: #777; font-size: 12px; margin-top: 2px; }
+.by { color: #1f4e79; }
+.empty { color: #aaa; }
+.pin { background: #b5443b; color: #fff; font-size: 10px; padding: 1px 5px; border-radius: 3px; margin-right: 6px; }
+.project-link { margin-left: 8px; font-size: 12px; color: #6f8f3f; font-weight: bold; text-decoration: none; }
+.project-link:hover { text-decoration: underline; }
+
+.breadcrumbs { margin-bottom: 12px; color: #555; }
+.breadcrumbs a { color: #1f4e79; text-decoration: none; }
+.breadcrumbs a:hover { text-decoration: underline; }
+
+.actions-row { margin-bottom: 12px; }
+.btn {
+    display: inline-block;
+    background: #3b6ea5;
+    color: #fff !important;
+    padding: 6px 14px;
+    border-radius: 3px;
+    text-decoration: none !important;
+    border: none;
+    cursor: pointer;
+    font-size: 13px;
+}
+.btn:hover { background: #1f4e79; }
+
+.topic-heading { font-size: 18px; color: #1f4e79; border-bottom: 2px solid #6f8f3f; padding-bottom: 8px; }
+
+.post { display: flex; gap: 12px; border: 1px solid #e3dcc6; margin-bottom: 10px; border-radius: 4px; overflow: hidden; }
+.post-author {
+    width: 150px;
+    background: #f3efe0;
+    padding: 10px;
+    color: #1f4e79;
+}
+.post-body { flex: 1; padding: 10px; }
+.post-meta { color: #999; font-size: 11px; margin-bottom: 6px; }
+.post-content { white-space: pre-wrap; line-height: 1.5; }
+
+.reply-form textarea, .std-form textarea, .std-form input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #b8a677;
+    border-radius: 3px;
+    font-family: inherit;
+    font-size: 13px;
+}
+.reply-form { margin-top: 16px; }
+.reply-form textarea { margin-bottom: 8px; }
+.std-form p { margin: 10px 0; }
+.locked-note { color: #b5443b; font-style: italic; }
+
+.messages { list-style: none; padding: 0; margin: 0 0 12px; }
+.messages .message { background: #eaf1db; border: 1px solid #b6cf94; padding: 8px 12px; border-radius: 3px; margin-bottom: 6px; }
+.messages .error { background: #fbe4e2; border-color: #e2a49e; }
+
+.page-title { color: #1f4e79; }
+
+.site-footer {
+    text-align: center;
+    color: #777;
+    font-size: 12px;
+    padding: 10px;
+}

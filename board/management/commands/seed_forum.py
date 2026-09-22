@@ -1,0 +1,50 @@
+from django.contrib.auth import get_user_model
+from django.core.management.base import BaseCommand
+
+from board.models import Category, Post, Topic
+
+CATEGORIES = [
+    ('Мои проекты', 'Проекты, которые я разрабатываю и выкладываю на GitHub', 0),
+    ('Общий раздел', 'Обсуждение всего подряд', 1),
+    ('Вопросы и помощь', 'Задавайте вопросы по коду и разработке', 2),
+]
+
+
+class Command(BaseCommand):
+    help = 'Создаёт стартовые категории и приветственную тему'
+
+    def handle(self, *args, **options):
+        User = get_user_model()
+        author, _ = User.objects.get_or_create(
+            username='admin',
+            defaults={'is_staff': True, 'is_superuser': True},
+        )
+        if not author.has_usable_password():
+            author.set_password('admin')
+            author.save()
+
+        for name, description, order in CATEGORIES:
+            category, created = Category.objects.get_or_create(
+                name=name, defaults={'description': description, 'order': order}
+            )
+            if created:
+                self.stdout.write(self.style.SUCCESS(f'Создана категория: {name}'))
+
+        projects = Category.objects.get(name='Мои проекты')
+        if not projects.topics.exists():
+            topic = Topic.objects.create(
+                category=projects,
+                title='Добро пожаловать на Jo Pirat Forum',
+                author=author,
+            )
+            Post.objects.create(
+                topic=topic,
+                author=author,
+                body=(
+                    'Привет! Это форум, где я выкладываю свои проекты и делюсь тем, '
+                    'над чем работаю. Заходите, читайте, оставляйте комментарии.'
+                ),
+            )
+            self.stdout.write(self.style.SUCCESS('Создана приветственная тема'))
+
+        self.stdout.write(self.style.SUCCESS('Готово.'))

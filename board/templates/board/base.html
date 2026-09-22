@@ -1,0 +1,51 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Jo Pirat Forum{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/forum.css' %}">
+</head>
+<body>
+<div class="wrapper">
+    <header class="site-header">
+        <a href="{% url 'index' %}" class="logo">
+            <span class="logo-icon">☠</span>
+            <span class="logo-text">
+                <strong>Jo Pirat</strong>
+                <small>Форум разработки и выкладки проектов</small>
+            </span>
+        </a>
+    </header>
+
+    <nav class="topbar">
+        <a href="{% url 'index' %}">Форум</a>
+        {% if user.is_authenticated %}
+            <span class="topbar-user">Вы вошли как <strong>{{ user.username }}</strong></span>
+            {% if user.is_staff %}<a href="{% url 'admin:index' %}">Админка</a>{% endif %}
+            <form action="{% url 'logout' %}" method="post" class="inline-form">
+                {% csrf_token %}
+                <button type="submit" class="link-button">Выход</button>
+            </form>
+        {% else %}
+            <a href="{% url 'login' %}">Вход</a>
+            <a href="{% url 'register' %}">Регистрация</a>
+        {% endif %}
+    </nav>
+
+    <main class="content">
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}<li class="message {{ message.tags }}">{{ message }}</li>{% endfor %}
+            </ul>
+        {% endif %}
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="site-footer">
+        <p>Jo Pirat Forum &mdash; сделано на Django</p>
+    </footer>
+</div>
+</body>
+</html>

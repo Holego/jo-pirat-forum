@@ -1,0 +1,38 @@
+{% extends 'board/base.html' %}
+{% block title %}{{ topic.title }} — Jo Pirat Forum{% endblock %}
+{% block content %}
+<div class="breadcrumbs">
+    <a href="{% url 'index' %}">Форум</a> &raquo;
+    <a href="{{ topic.category.get_absolute_url }}">{{ topic.category.name }}</a> &raquo;
+    {{ topic.title }}
+</div>
+
+<h1 class="topic-heading">
+    {{ topic.title }}
+    {% if topic.project_url %}<a href="{{ topic.project_url }}" class="project-link" target="_blank" rel="noopener">открыть проект &rarr;</a>{% endif %}
+</h1>
+
+{% for post in posts %}
+<div class="post" id="post-{{ post.pk }}">
+    <div class="post-author">
+        <strong>{{ post.author.username }}</strong>
+    </div>
+    <div class="post-body">
+        <div class="post-meta">{{ post.created_at|date:"d M Y H:i" }}</div>
+        <div class="post-content">{{ post.body|linebreaks }}</div>
+    </div>
+</div>
+{% endfor %}
+
+{% if topic.is_locked %}
+    <p class="locked-note">Тема закрыта для новых ответов.</p>
+{% elif user.is_authenticated %}
+    <form method="post" class="reply-form">
+        {% csrf_token %}
+        {{ form.body }}
+        <button type="submit" class="btn">Ответить</button>
+    </form>
+{% else %}
+    <p><a href="{% url 'login' %}">Войдите</a>, чтобы ответить в теме.</p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends 'board/base.html' %}
+{% block content %}
+<div class="breadcrumbs">
+    <a href="{% url 'index' %}">Форум</a> &raquo;
+    <a href="{{ category.get_absolute_url }}">{{ category.name }}</a> &raquo; Новая тема
+</div>
+
+<form method="post" class="std-form">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn">Создать тему</button>
+</form>
+{% endblock %}
