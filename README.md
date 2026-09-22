@@ -8,37 +8,35 @@ classic phpBB-style forums.
 задавай вопросы, обсуждай код и флуди в оффтопе. Стилизован под
 классические phpBB-форумы.
 
-## Возможности
+## Features
 
-- Категории → темы → сообщения, отдельный раздел «Флуд»
-- Регистрация и вход
-- Профиль: аватар, описание, ссылки (сайт, GitHub), статус (новичок / участник / ветеран / модератор)
-- Создание тем с необязательной ссылкой на проект (GitHub и т.п.)
-- Прикрепление картинок к сообщениям и темам
-- Бан пользователей из админки
-- Админка Django для модерации
+- Categories → topics → posts; dedicated "Flood" section
+- Registration and login
+- Profile: avatar, description, links (website, GitHub), status (Newbie / Member / Veteran / Moderator)
+- Topic creation with optional project link (GitHub, etc.)
+- Image attachments for posts and topics
+- User banning via the admin panel
+- Django admin interface for moderation
 
-## Запуск локально
-
+## Star Local
 ```bash
 pip install -r requirements.txt
 python manage.py migrate
-python manage.py seed_forum   # создаёт стартовые категории и пользователя admin/admin
+python manage.py seed_forum   # admin/admin
 python manage.py runserver
 ```
 
-Форум будет доступен на http://127.0.0.1:8000/
+The forum will be available on http://127.0.0.1:8000/
 
-## Стек
+## Stack
 
 - Python / Django
-- SQLite (по умолчанию)
-- Pillow (обработка изображений)
-- Ванильный HTML/CSS без фронтенд-фреймворков
+- SQLite (default)
+- Pillow (image processing)
+- Vanilla HTML/CSS without front-end frameworks
+## Plans
 
-## Планы
-
-- Личные сообщения
-- Разметка Markdown в сообщениях
-- Поиск по форуму
-- Автоматическое присвоение статуса по количеству сообщений
+- Personal messages
+- Markdown in messages
+- Search the forum
+- Automatic assignment of status based on the number of messagesий
