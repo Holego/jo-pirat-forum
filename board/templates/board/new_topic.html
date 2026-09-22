@@ -5,9 +5,12 @@
     <a href="{{ category.get_absolute_url }}">{{ category.name }}</a> &raquo; Новая тема
 </div>
 
-<form method="post" class="std-form">
+<form method="post" class="std-form" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form.as_p }}
+    <div class="file-row">
+        <label>Приложить картинки (до 4): <input type="file" name="images" accept="image/*" multiple></label>
+    </div>
     <button type="submit" class="btn">Создать тему</button>
 </form>
 {% endblock %}

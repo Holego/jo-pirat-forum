@@ -14,7 +14,7 @@
             <span class="logo-icon">☠</span>
             <span class="logo-text">
                 <strong>Jo Pirat</strong>
-                <small>Форум разработки и выкладки проектов</small>
+                <small>Форум разработчиков &mdash; код, проекты, флуд</small>
             </span>
         </a>
     </header>
@@ -22,6 +22,7 @@
     <nav class="topbar">
         <a href="{% url 'index' %}">Форум</a>
         {% if user.is_authenticated %}
+            <a href="{% url 'profile_detail' user.username %}">Мой профиль</a>
             <span class="topbar-user">Вы вошли как <strong>{{ user.username }}</strong></span>
             {% if user.is_staff %}<a href="{% url 'admin:index' %}">Админка</a>{% endif %}
             <form action="{% url 'logout' %}" method="post" class="inline-form">

@@ -15,11 +15,26 @@
 {% for post in posts %}
 <div class="post" id="post-{{ post.pk }}">
     <div class="post-author">
-        <strong>{{ post.author.username }}</strong>
+        <a href="{% url 'profile_detail' post.author.username %}" class="author-link">
+            {% if post.author.profile.avatar %}
+                <img class="avatar" src="{{ post.author.profile.avatar.url }}" alt="{{ post.author.username }}">
+            {% else %}
+                <span class="avatar avatar-placeholder">{{ post.author.username|first|upper }}</span>
+            {% endif %}
+            <strong>{{ post.author.username }}</strong>
+        </a>
+        <span class="status-badge status-{{ post.author.profile.status }}">{{ post.author.profile.get_status_display_ru }}</span>
     </div>
     <div class="post-body">
         <div class="post-meta">{{ post.created_at|date:"d M Y H:i" }}</div>
         <div class="post-content">{{ post.body|linebreaks }}</div>
+        {% if post.images.all %}
+        <div class="post-images">
+            {% for img in post.images.all %}
+                <a href="{{ img.image.url }}" target="_blank" rel="noopener"><img src="{{ img.image.url }}" alt=""></a>
+            {% endfor %}
+        </div>
+        {% endif %}
     </div>
 </div>
 {% endfor %}
@@ -27,9 +42,12 @@
 {% if topic.is_locked %}
     <p class="locked-note">Тема закрыта для новых ответов.</p>
 {% elif user.is_authenticated %}
-    <form method="post" class="reply-form">
+    <form method="post" class="reply-form" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form.body }}
+        <div class="file-row">
+            <label>Приложить картинки (до 4): <input type="file" name="images" accept="image/*" multiple></label>
+        </div>
         <button type="submit" class="btn">Ответить</button>
     </form>
 {% else %}

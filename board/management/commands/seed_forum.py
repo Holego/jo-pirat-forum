@@ -1,12 +1,13 @@
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
 
-from board.models import Category, Post, Topic
+from board.models import Category, Post, Profile, Topic
 
 CATEGORIES = [
     ('Мои проекты', 'Проекты, которые я разрабатываю и выкладываю на GitHub', 0),
-    ('Общий раздел', 'Обсуждение всего подряд', 1),
-    ('Вопросы и помощь', 'Задавайте вопросы по коду и разработке', 2),
+    ('Вопросы и помощь', 'Задавайте вопросы по коду и разработке', 1),
+    ('Общий раздел', 'Обсуждение разработки, инструментов, технологий', 2),
+    ('Флуд', 'Оффтоп и флуд обо всём на свете', 3),
 ]
 
 
@@ -22,6 +23,7 @@ class Command(BaseCommand):
         if not author.has_usable_password():
             author.set_password('admin')
             author.save()
+        Profile.objects.filter(user=author).update(status=Profile.MODERATOR)
 
         for name, description, order in CATEGORIES:
             category, created = Category.objects.get_or_create(

@@ -1,0 +1,41 @@
+{% extends 'board/base.html' %}
+{% block title %}{{ profile_user.username }} — Jo Pirat Forum{% endblock %}
+{% block content %}
+<div class="breadcrumbs"><a href="{% url 'index' %}">Форум</a> &raquo; {{ profile_user.username }}</div>
+
+<div class="profile-card">
+    {% if profile_user.profile.avatar %}
+        <img class="avatar avatar-big" src="{{ profile_user.profile.avatar.url }}" alt="{{ profile_user.username }}">
+    {% else %}
+        <span class="avatar avatar-big avatar-placeholder">{{ profile_user.username|first|upper }}</span>
+    {% endif %}
+    <div class="profile-info">
+        <h1 class="page-title">
+            {{ profile_user.username }}
+            <span class="status-badge status-{{ profile_user.profile.status }}">{{ profile_user.profile.get_status_display_ru }}</span>
+            {% if profile_user.profile.is_banned %}<span class="status-badge status-banned">забанен</span>{% endif %}
+        </h1>
+        {% if profile_user.profile.bio %}<p class="profile-bio">{{ profile_user.profile.bio|linebreaks }}</p>{% endif %}
+        <p class="profile-links">
+            {% if profile_user.profile.website %}<a href="{{ profile_user.profile.website }}" target="_blank" rel="noopener">Сайт</a>{% endif %}
+            {% if profile_user.profile.github %}<a href="{{ profile_user.profile.github }}" target="_blank" rel="noopener">GitHub</a>{% endif %}
+        </p>
+        {% if user == profile_user %}<a class="btn" href="{% url 'profile_edit' %}">Редактировать профиль</a>{% endif %}
+    </div>
+</div>
+
+<h2 class="page-title">Темы пользователя</h2>
+<table class="forum-table">
+    <thead><tr><th class="col-main">Тема</th><th class="col-last">Раздел</th></tr></thead>
+    <tbody>
+        {% for topic in topics %}
+        <tr>
+            <td class="col-main"><a href="{{ topic.get_absolute_url }}" class="topic-title">{{ topic.title }}</a></td>
+            <td class="col-last"><a href="{{ topic.category.get_absolute_url }}">{{ topic.category.name }}</a></td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="2">Пока нет тем.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

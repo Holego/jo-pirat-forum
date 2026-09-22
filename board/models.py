@@ -1,7 +1,45 @@
 from django.conf import settings
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.urls import reverse
 from django.utils.text import slugify
+
+
+class Profile(models.Model):
+    NEWBIE = 'newbie'
+    MEMBER = 'member'
+    VETERAN = 'veteran'
+    MODERATOR = 'moderator'
+    BANNED = 'banned'
+    STATUS_CHOICES = [
+        (NEWBIE, 'Новичок'),
+        (MEMBER, 'Участник'),
+        (VETERAN, 'Ветеран'),
+        (MODERATOR, 'Модератор'),
+        (BANNED, 'Заблокирован'),
+    ]
+
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, related_name='profile', on_delete=models.CASCADE)
+    avatar = models.ImageField('Аватар', upload_to='avatars/', blank=True)
+    bio = models.TextField('О себе', blank=True)
+    website = models.URLField('Сайт / портфолио', blank=True)
+    github = models.URLField('GitHub', blank=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=NEWBIE)
+    is_banned = models.BooleanField('Забанен', default=False)
+    ban_reason = models.CharField('Причина бана', max_length=255, blank=True)
+
+    def __str__(self):
+        return f'Профиль {self.user.username}'
+
+    def get_status_display_ru(self):
+        return dict(self.STATUS_CHOICES).get(self.status, self.status)
+
+
+@receiver(post_save, sender=settings.AUTH_USER_MODEL)
+def create_profile(sender, instance, created, **kwargs):
+    if created:
+        Profile.objects.get_or_create(user=instance)
 
 
 class Category(models.Model):
@@ -83,3 +121,11 @@ class Post(models.Model):
 
     def __str__(self):
         return f'{self.author} @ {self.topic}'
+
+
+class PostImage(models.Model):
+    post = models.ForeignKey(Post, related_name='images', on_delete=models.CASCADE)
+    image = models.ImageField('Изображение', upload_to='post_images/%Y/%m/')
+
+    def __str__(self):
+        return f'Изображение к посту #{self.post_id}'
