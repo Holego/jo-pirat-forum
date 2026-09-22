@@ -4,9 +4,9 @@ A small Django forum for developers — post your projects, ask questions,
 discuss code and hang out in the off-topic/flood section. Styled after
 classic phpBB-style forums.
 
-Небольшой форум на Django для разработчиков — выкладывай свои проекты,
-задавай вопросы, обсуждай код и флуди в оффтопе. Стилизован под
-классические phpBB-форумы.
+A small Django forum for developers - post your projects,
+Ask questions, discuss code, and spam in the off-topic. Styled as
+classic phpBB forums.
 
 ## Features
 
