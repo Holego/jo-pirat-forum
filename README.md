@@ -18,7 +18,7 @@ classic phpBB forums.
 - User banning via the admin panel
 - Django admin interface for moderation
 
-## Star Local
+## Run locally
 ```bash
 pip install -r requirements.txt
 python manage.py migrate
@@ -40,4 +40,4 @@ The forum will be available on http://127.0.0.1:8000/
 - Personal messages
 - Markdown in messages
 - Search the forum
-- Automatic assignment of status based on the number of messagesий
+- Automatic assignment of status based on the number of messages
