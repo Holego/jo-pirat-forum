@@ -145,3 +145,29 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'index'
 LOGOUT_REDIRECT_URL = 'index'
+
+# Django's own default logging only emails ADMINS on a 500 (nothing is
+# configured to receive that), so with DEBUG=False a request-handling
+# exception otherwise leaves no trace anywhere. Send it to stderr instead,
+# which gunicorn on the phone redirects into ~/.jo-pirat-forum/gunicorn.log.
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'django.request': {
+            'handlers': ['console'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+    },
+}
