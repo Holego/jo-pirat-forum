@@ -22,7 +22,8 @@ classic phpBB forums.
 ```bash
 pip install -r requirements.txt
 python manage.py migrate
-python manage.py seed_forum   # admin/admin
+python manage.py seed_forum   # creates the admin account (no password set — see below)
+python manage.py changepassword admin   # set a real password before exposing the site
 python manage.py runserver
 ```
 
