@@ -63,6 +63,11 @@ tail -f ~/.jo-pirat-forum/gunicorn.log
 cat ~/tor-forum/hostname
 ```
 
+The log is appended to (not overwritten) on every restart, so a crash or a
+500 stays visible even after you run `run_forum.sh` again — each restart
+just adds a `----- restart ... -----` marker. It grows forever though, so
+occasionally `> ~/.jo-pirat-forum/gunicorn.log` to clear it if it gets big.
+
 ## Notes
 
 - `DJANGO_ALLOWED_HOSTS` defaults to `*` here since the only way in is via

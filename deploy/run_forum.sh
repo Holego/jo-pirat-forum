@@ -66,8 +66,9 @@ if [ -f "$PIDFILE" ] && kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
     kill "$(cat "$PIDFILE")"
     sleep 1
 fi
-nohup gunicorn core.wsgi:application --bind 127.0.0.1:8000 --workers 2 \
-    > "$LOGFILE" 2>&1 &
+echo "----- restart $(date) -----" >> "$LOGFILE"
+nohup gunicorn core.wsgi:application --bind 127.0.0.1:8000 --workers 1 \
+    >> "$LOGFILE" 2>&1 &
 echo $! > "$PIDFILE"
 disown
 

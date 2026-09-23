@@ -82,6 +82,10 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
+        # SQLite locks the whole file on writes; a generous busy timeout stops
+        # concurrent requests from failing with "database is locked" instead
+        # of just waiting briefly for the other write to finish.
+        'OPTIONS': {'timeout': 20},
     }
 }
 
