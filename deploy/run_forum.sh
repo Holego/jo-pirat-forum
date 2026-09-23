@@ -37,6 +37,9 @@ export DJANGO_ALLOWED_HOSTS="${DJANGO_ALLOWED_HOSTS:-*}"
 echo "==> Applying migrations"
 python manage.py migrate --noinput
 
+echo "==> Seeding starter categories (safe to re-run)"
+python manage.py seed_forum
+
 echo "==> Collecting static files"
 python manage.py collectstatic --noinput >/dev/null
 
@@ -67,5 +70,14 @@ nohup gunicorn core.wsgi:application --bind 127.0.0.1:8000 --workers 2 \
     > "$LOGFILE" 2>&1 &
 echo $! > "$PIDFILE"
 disown
+
+NEEDS_PASSWORD="$(python manage.py shell -c "
+from django.contrib.auth import get_user_model
+u = get_user_model().objects.filter(username='admin').first()
+print('yes' if u and not u.has_usable_password() else 'no')
+" 2>/dev/null | tail -1)"
+if [ "$NEEDS_PASSWORD" = "yes" ]; then
+    echo "==> !!! admin account has NO password set — run: python manage.py changepassword admin"
+fi
 
 echo "==> Done. Logs: $LOGFILE"

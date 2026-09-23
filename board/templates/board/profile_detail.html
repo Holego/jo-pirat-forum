@@ -17,8 +17,9 @@
         </h1>
         {% if profile_user.profile.bio %}<p class="profile-bio">{{ profile_user.profile.bio|linebreaks }}</p>{% endif %}
         <p class="profile-links">
-            {% if profile_user.profile.website %}<a href="{{ profile_user.profile.website }}" target="_blank" rel="noopener">Сайт</a>{% endif %}
-            {% if profile_user.profile.github %}<a href="{{ profile_user.profile.github }}" target="_blank" rel="noopener">GitHub</a>{% endif %}
+            {% for link in profile_user.profile.links.all %}
+                <a href="{{ link.url }}" target="_blank" rel="noopener">{{ link.label }}</a>
+            {% endfor %}
         </p>
         {% if user == profile_user %}<a class="btn" href="{% url 'profile_edit' %}">Редактировать профиль</a>{% endif %}
     </div>

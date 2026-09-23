@@ -6,4 +6,25 @@
     {{ form.as_p }}
     <button type="submit" class="btn">Сохранить</button>
 </form>
+
+<h2 class="page-title">Ссылки</h2>
+<ul class="link-list">
+    {% for link in user.profile.links.all %}
+    <li>
+        <a href="{{ link.url }}" target="_blank" rel="noopener">{{ link.label }}</a>
+        <form action="{% url 'delete_profile_link' link.pk %}" method="post" class="inline-form">
+            {% csrf_token %}
+            <button type="submit" class="link-button remove-link">удалить</button>
+        </form>
+    </li>
+    {% empty %}
+    <li class="empty">Пока нет ни одной ссылки.</li>
+    {% endfor %}
+</ul>
+
+<form method="post" action="{% url 'add_profile_link' %}" class="std-form">
+    {% csrf_token %}
+    {{ link_form.as_p }}
+    <button type="submit" class="btn">Добавить ссылку</button>
+</form>
 {% endblock %}

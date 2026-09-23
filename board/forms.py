@@ -3,8 +3,8 @@ from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 
-from .models import Category, Post, Profile, Topic
-from .validators import validate_image_size
+from .models import Category, Post, Profile, ProfileLink, Topic
+from .validators import validate_audio_file, validate_image_size
 
 
 class RegisterForm(UserCreationForm):
@@ -45,6 +45,10 @@ class PostImageForm(forms.Form):
     image = forms.ImageField(validators=[validate_image_size])
 
 
+class PostAudioForm(forms.Form):
+    file = forms.FileField(validators=[validate_audio_file])
+
+
 class CategoryForm(forms.ModelForm):
     class Meta:
         model = Category
@@ -55,11 +59,14 @@ class CategoryForm(forms.ModelForm):
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ['avatar', 'bio', 'website', 'github']
-        labels = {
-            'avatar': 'Аватар',
-            'bio': 'О себе',
-            'website': 'Сайт / портфолио',
-            'github': 'GitHub',
-        }
+        fields = ['avatar', 'bio']
+        labels = {'avatar': 'Аватар', 'bio': 'О себе'}
         widgets = {'bio': forms.Textarea(attrs={'rows': 5, 'placeholder': 'Пара слов о себе...'})}
+
+
+class ProfileLinkForm(forms.ModelForm):
+    class Meta:
+        model = ProfileLink
+        fields = ['label', 'url']
+        labels = {'label': 'Название', 'url': 'Ссылка'}
+        widgets = {'label': forms.TextInput(attrs={'placeholder': 'Например: Telegram'})}

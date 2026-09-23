@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Category, Post, PostImage, Profile, Topic
+from .models import Category, Post, PostAudio, PostImage, Profile, ProfileLink, Topic
 
 
 @admin.register(Category)
@@ -20,18 +20,29 @@ class PostImageInline(admin.TabularInline):
     extra = 0
 
 
+class PostAudioInline(admin.TabularInline):
+    model = PostAudio
+    extra = 0
+
+
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
     list_display = ['topic', 'author', 'created_at']
-    inlines = [PostImageInline]
+    inlines = [PostImageInline, PostAudioInline]
+
+
+class ProfileLinkInline(admin.TabularInline):
+    model = ProfileLink
+    extra = 0
 
 
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
-    list_display = ['user', 'status', 'is_banned', 'website', 'github']
+    list_display = ['user', 'status', 'is_banned']
     list_filter = ['status', 'is_banned']
     search_fields = ['user__username']
     actions = ['ban_users', 'unban_users']
+    inlines = [ProfileLinkInline]
 
     @admin.action(description='Забанить выбранных пользователей')
     def ban_users(self, request, queryset):

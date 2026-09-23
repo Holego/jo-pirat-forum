@@ -5,7 +5,7 @@ from django.dispatch import receiver
 from django.urls import reverse
 from django.utils.text import slugify
 
-from .validators import validate_image_size
+from .validators import validate_audio_file, validate_image_size
 
 
 class Profile(models.Model):
@@ -25,8 +25,6 @@ class Profile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, related_name='profile', on_delete=models.CASCADE)
     avatar = models.ImageField('Аватар', upload_to='avatars/', blank=True, validators=[validate_image_size])
     bio = models.TextField('О себе', max_length=2000, blank=True)
-    website = models.URLField('Сайт / портфолио', blank=True)
-    github = models.URLField('GitHub', blank=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=NEWBIE)
     is_banned = models.BooleanField('Забанен', default=False)
     ban_reason = models.CharField('Причина бана', max_length=255, blank=True)
@@ -36,6 +34,19 @@ class Profile(models.Model):
 
     def get_status_display_ru(self):
         return dict(self.STATUS_CHOICES).get(self.status, self.status)
+
+
+class ProfileLink(models.Model):
+    profile = models.ForeignKey(Profile, related_name='links', on_delete=models.CASCADE)
+    label = models.CharField('Название', max_length=50)
+    url = models.URLField('Ссылка')
+    order = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ['order', 'id']
+
+    def __str__(self):
+        return f'{self.label} ({self.profile.user.username})'
 
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
@@ -131,3 +142,12 @@ class PostImage(models.Model):
 
     def __str__(self):
         return f'Изображение к посту #{self.post_id}'
+
+
+class PostAudio(models.Model):
+    post = models.ForeignKey(Post, related_name='audio_files', on_delete=models.CASCADE)
+    file = models.FileField('Аудио', upload_to='post_audio/%Y/%m/', validators=[validate_audio_file])
+    original_name = models.CharField(max_length=255, blank=True)
+
+    def __str__(self):
+        return f'Аудио к посту #{self.post_id}'
