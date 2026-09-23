@@ -34,11 +34,27 @@ Android kills background processes aggressively, so for something close to
 
 - Disable battery optimization for Termux (Android Settings → Apps → Termux
   → Battery → Unrestricted).
-- Run `termux-wake-lock` once per boot (keeps the CPU from sleeping while
-  Termux is open).
 - Keep the phone charging if it's going to sit as a "server".
-- Consider [Termux:Boot](https://f-droid.org/packages/com.termux.boot/) to
-  auto-run `deploy/run_forum.sh` when the phone restarts.
+- Set up autostart on boot (below) so a reboot doesn't take the site down
+  for good.
+
+### Autostart on boot
+
+1. Install **Termux:Boot** from F-Droid — it's a separate app, same
+   publisher as Termux: https://f-droid.org/packages/com.termux.boot/
+2. Open Termux:Boot once (just launch it, no setup screen — this is what
+   makes Android register its boot receiver).
+3. Link the boot script in:
+   ```bash
+   mkdir -p ~/.termux/boot
+   ln -s ~/jo-pirat-forum/deploy/termux_boot.sh ~/.termux/boot/start-forum.sh
+   chmod +x ~/.termux/boot/start-forum.sh
+   ```
+   (adjust `~/jo-pirat-forum` if you cloned the repo somewhere else).
+
+From then on, every reboot runs `deploy/termux_boot.sh`, which takes a
+wake-lock and calls `deploy/run_forum.sh` — same update-and-start logic as
+running it by hand, logged to `~/.jo-pirat-forum/boot.log`.
 
 ## Checking it's alive
 
