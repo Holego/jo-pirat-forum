@@ -1,8 +1,10 @@
+import re
+
 from django.conf import settings
-from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
-from django.urls import include, path, reverse_lazy
+from django.urls import include, path, re_path, reverse_lazy
+from django.views.static import serve as serve_static
 
 from board.forms import BanAwareAuthenticationForm
 
@@ -33,7 +35,13 @@ urlpatterns = [
     path('', include('board.urls')),
 ]
 
-# Served unconditionally (not just in DEBUG) because this app is deployed
-# without a separate web server (e.g. directly via gunicorn on a phone) —
-# there is nothing else in front of it to serve uploaded avatars/images.
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# Django's own conf.urls.static.static() helper silently registers ZERO
+# patterns whenever DEBUG=False, regardless of how it's called — which is
+# exactly our case here (deployed without a separate web server, e.g.
+# directly via gunicorn on a phone, so nothing else serves the uploaded
+# avatars/images). Wiring django.views.static.serve() directly bypasses
+# that guard so media is actually served in this DEBUG=False deployment.
+urlpatterns += [
+    re_path(r'^%s(?P<path>.*)$' % re.escape(settings.MEDIA_URL.lstrip('/')), serve_static,
+            {'document_root': settings.MEDIA_ROOT}),
+]
