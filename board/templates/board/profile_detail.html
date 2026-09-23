@@ -21,7 +21,12 @@
                 <a href="{{ link.url }}" target="_blank" rel="noopener">{{ link.label }}</a>
             {% endfor %}
         </p>
-        {% if user == profile_user %}<a class="btn" href="{% url 'profile_edit' %}">Редактировать профиль</a>{% endif %}
+        {% if user == profile_user %}
+            <a class="btn" href="{% url 'profile_edit' %}">Редактировать профиль</a>
+        {% elif user.is_authenticated %}
+            <a class="btn" href="{% url 'conversation' profile_user.username %}">Написать сообщение</a>
+        {% endif %}
+        {% if profile_user.profile.last_seen %}<p class="profile-bio">Был(а) на форуме: {{ profile_user.profile.last_seen|date:"d M Y H:i" }}</p>{% endif %}
     </div>
 </div>
 

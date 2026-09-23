@@ -1,0 +1,34 @@
+{% extends 'board/base.html' %}
+{% block title %}Пользователи — Jo Pirat Forum{% endblock %}
+{% block content %}
+<div class="breadcrumbs"><a href="{% url 'index' %}">Форум</a> &raquo; Пользователи</div>
+<h1 class="page-title">Пользователи ({{ users|length }})</h1>
+
+<table class="forum-table">
+    <thead>
+        <tr>
+            <th class="col-main">Пользователь</th>
+            <th class="col-num">Статус</th>
+            <th class="col-last">Был(а) на форуме</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for u in users %}
+        <tr>
+            <td class="col-main">
+                <a href="{% url 'profile_detail' u.username %}" class="author-link">
+                    {% if u.profile.avatar %}
+                        <img class="avatar" src="{{ u.profile.avatar.url }}" alt="{{ u.username }}">
+                    {% else %}
+                        <span class="avatar avatar-placeholder">{{ u.username|first|upper }}</span>
+                    {% endif %}
+                    <strong>{{ u.username }}</strong>
+                </a>
+            </td>
+            <td class="col-num"><span class="status-badge status-{{ u.profile.status }}">{{ u.profile.get_status_display_ru }}</span></td>
+            <td class="col-last">{% if u.profile.last_seen %}{{ u.profile.last_seen|date:"d M Y H:i" }}{% else %}&mdash;{% endif %}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

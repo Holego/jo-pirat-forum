@@ -21,7 +21,9 @@
 
     <nav class="topbar">
         <a href="{% url 'index' %}">Форум</a>
+        <a href="{% url 'user_list' %}">Пользователи</a>
         {% if user.is_authenticated %}
+            <a href="{% url 'inbox' %}">Сообщения{% if unread_message_count %} <span class="status-badge status-banned">{{ unread_message_count }}</span>{% endif %}</a>
             <a href="{% url 'profile_detail' user.username %}">Мой профиль</a>
             <a href="{% url 'password_change' %}">Сменить пароль</a>
             <span class="topbar-user">Вы вошли как <strong>{{ user.username }}</strong></span>
@@ -35,6 +37,15 @@
             <a href="{% url 'register' %}">Регистрация</a>
         {% endif %}
     </nav>
+
+    <div class="presence-bar">
+        <span>На форуме сейчас ({{ online_count }}):</span>
+        {% for u in online_users %}<a href="{% url 'profile_detail' u.username %}">{{ u.username }}</a>{% empty %}<span class="empty">никого</span>{% endfor %}
+        {% if recent_users %}
+            <span class="presence-sep">Недавно заходили:</span>
+            {% for u in recent_users %}<a href="{% url 'profile_detail' u.username %}">{{ u.username }}</a>{% endfor %}
+        {% endif %}
+    </div>
 
     <main class="content">
         {% if messages %}

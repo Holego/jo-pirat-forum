@@ -3,7 +3,7 @@ from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 
-from .models import Category, Post, Profile, ProfileLink, Topic
+from .models import Category, Post, PrivateMessage, Profile, ProfileLink, Topic
 from .validators import validate_audio_file, validate_image_size
 
 
@@ -70,3 +70,11 @@ class ProfileLinkForm(forms.ModelForm):
         fields = ['label', 'url']
         labels = {'label': 'Название', 'url': 'Ссылка'}
         widgets = {'label': forms.TextInput(attrs={'placeholder': 'Например: Telegram'})}
+
+
+class MessageForm(forms.ModelForm):
+    class Meta:
+        model = PrivateMessage
+        fields = ['body']
+        labels = {'body': ''}
+        widgets = {'body': forms.Textarea(attrs={'rows': 4, 'placeholder': 'Написать сообщение...'})}

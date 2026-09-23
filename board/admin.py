@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Category, Post, PostAudio, PostImage, Profile, ProfileLink, Topic
+from .models import Category, Post, PostAudio, PostImage, PrivateMessage, Profile, ProfileLink, Topic
 
 
 @admin.register(Category)
@@ -53,3 +53,10 @@ class ProfileAdmin(admin.ModelAdmin):
     def unban_users(self, request, queryset):
         updated = queryset.update(is_banned=False, status=Profile.MEMBER)
         self.message_user(request, f'Разблокировано пользователей: {updated}')
+
+
+@admin.register(PrivateMessage)
+class PrivateMessageAdmin(admin.ModelAdmin):
+    list_display = ['sender', 'recipient', 'created_at', 'is_read']
+    list_filter = ['is_read']
+    search_fields = ['sender__username', 'recipient__username', 'body']

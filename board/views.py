@@ -3,10 +3,12 @@ from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.models import User
 from django.db import transaction
+from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 
 from .forms import (
     CategoryForm,
+    MessageForm,
     NewTopicForm,
     PostAudioForm,
     PostForm,
@@ -15,7 +17,7 @@ from .forms import (
     ProfileLinkForm,
     RegisterForm,
 )
-from .models import Category, Post, PostAudio, PostImage, ProfileLink, Topic
+from .models import Category, Post, PostAudio, PostImage, PrivateMessage, ProfileLink, Topic
 
 MAX_IMAGES_PER_POST = 4
 MAX_AUDIO_PER_POST = 2
@@ -183,3 +185,56 @@ def delete_profile_link(request, pk):
         link.delete()
         messages.success(request, 'Ссылка удалена.')
     return redirect('profile_edit')
+
+
+@login_required
+def user_list(request):
+    users = User.objects.select_related('profile').order_by('username')
+    return render(request, 'board/user_list.html', {'users': users})
+
+
+@login_required
+def inbox(request):
+    thread_messages = PrivateMessage.objects.filter(
+        Q(sender=request.user) | Q(recipient=request.user)
+    ).select_related('sender', 'recipient').order_by('-created_at')
+
+    conversations = {}
+    for msg in thread_messages:
+        other = msg.recipient if msg.sender_id == request.user.id else msg.sender
+        entry = conversations.setdefault(other.id, {'user': other, 'last_message': msg, 'unread_count': 0})
+        if msg.recipient_id == request.user.id and not msg.is_read:
+            entry['unread_count'] += 1
+
+    conversation_list = sorted(conversations.values(), key=lambda c: c['last_message'].created_at, reverse=True)
+    return render(request, 'board/inbox.html', {'conversations': conversation_list})
+
+
+@login_required
+def conversation(request, username):
+    other = get_object_or_404(User, username=username)
+    if other == request.user:
+        messages.error(request, 'Нельзя написать самому себе.')
+        return redirect('inbox')
+
+    if request.method == 'POST':
+        if _blocked_if_banned(request):
+            return redirect('conversation', username=username)
+        form = MessageForm(request.POST)
+        if form.is_valid():
+            msg = form.save(commit=False)
+            msg.sender = request.user
+            msg.recipient = other
+            msg.save()
+            return redirect('conversation', username=username)
+    else:
+        form = MessageForm()
+
+    thread = list(
+        PrivateMessage.objects.filter(
+            (Q(sender=request.user) & Q(recipient=other)) | (Q(sender=other) & Q(recipient=request.user))
+        ).select_related('sender', 'recipient').order_by('created_at')
+    )
+    PrivateMessage.objects.filter(sender=other, recipient=request.user, is_read=False).update(is_read=True)
+
+    return render(request, 'board/conversation.html', {'other': other, 'thread': thread, 'form': form})
