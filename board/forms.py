@@ -3,7 +3,8 @@ from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 
-from .models import Post, Profile, Topic
+from .models import Category, Post, Profile, Topic
+from .validators import validate_image_size
 
 
 class RegisterForm(UserCreationForm):
@@ -22,7 +23,9 @@ class BanAwareAuthenticationForm(AuthenticationForm):
 
 
 class NewTopicForm(forms.ModelForm):
-    body = forms.CharField(widget=forms.Textarea(attrs={'rows': 8}), label='Сообщение')
+    body = forms.CharField(
+        widget=forms.Textarea(attrs={'rows': 8}), label='Сообщение', max_length=20000
+    )
 
     class Meta:
         model = Topic
@@ -36,6 +39,17 @@ class PostForm(forms.ModelForm):
         fields = ['body']
         labels = {'body': ''}
         widgets = {'body': forms.Textarea(attrs={'rows': 6, 'placeholder': 'Ваш ответ...'})}
+
+
+class PostImageForm(forms.Form):
+    image = forms.ImageField(validators=[validate_image_size])
+
+
+class CategoryForm(forms.ModelForm):
+    class Meta:
+        model = Category
+        fields = ['name', 'description', 'order']
+        labels = {'name': 'Название раздела', 'description': 'Описание', 'order': 'Порядок'}
 
 
 class ProfileForm(forms.ModelForm):

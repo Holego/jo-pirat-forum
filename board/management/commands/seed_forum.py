@@ -1,3 +1,5 @@
+import os
+
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
 
@@ -21,8 +23,17 @@ class Command(BaseCommand):
             defaults={'is_staff': True, 'is_superuser': True},
         )
         if not author.has_usable_password():
-            author.set_password('admin')
-            author.save()
+            admin_password = os.environ.get('DJANGO_ADMIN_PASSWORD')
+            if admin_password:
+                author.set_password(admin_password)
+                author.save()
+                self.stdout.write(self.style.SUCCESS('Пароль admin установлен из DJANGO_ADMIN_PASSWORD'))
+            else:
+                self.stdout.write(self.style.WARNING(
+                    'У пользователя admin ещё нет пароля. Установите его: '
+                    'python manage.py changepassword admin '
+                    '(или задайте DJANGO_ADMIN_PASSWORD перед запуском seed_forum).'
+                ))
         Profile.objects.filter(user=author).update(status=Profile.MODERATOR)
 
         for name, description, order in CATEGORIES:

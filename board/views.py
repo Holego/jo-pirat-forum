@@ -1,14 +1,16 @@
 from django.contrib import messages
 from django.contrib.auth import login
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.models import User
 from django.db import transaction
 from django.shortcuts import get_object_or_404, redirect, render
 
-from .forms import NewTopicForm, PostForm, ProfileForm, RegisterForm
+from .forms import CategoryForm, NewTopicForm, PostForm, PostImageForm, ProfileForm, RegisterForm
 from .models import Category, Post, PostImage, Topic
 
 MAX_IMAGES_PER_POST = 4
+
+staff_required = user_passes_test(lambda u: u.is_staff, login_url='login')
 
 
 def index(request):
@@ -23,9 +25,13 @@ def category_detail(request, slug):
 
 
 def _save_post_images(request, post):
-    images = request.FILES.getlist('images')[:MAX_IMAGES_PER_POST]
-    for image in images:
-        PostImage.objects.create(post=post, image=image)
+    files = request.FILES.getlist('images')[:MAX_IMAGES_PER_POST]
+    for f in files:
+        image_form = PostImageForm(files={'image': f})
+        if image_form.is_valid():
+            PostImage.objects.create(post=post, image=image_form.cleaned_data['image'])
+        else:
+            messages.warning(request, f'Файл «{f.name}» пропущен: это не изображение или файл слишком большой.')
 
 
 def _blocked_if_banned(request):
@@ -80,6 +86,19 @@ def new_topic(request, slug):
     else:
         form = NewTopicForm()
     return render(request, 'board/new_topic.html', {'category': category, 'form': form})
+
+
+@staff_required
+def new_category(request):
+    if request.method == 'POST':
+        form = CategoryForm(request.POST)
+        if form.is_valid():
+            category = form.save()
+            messages.success(request, f'Раздел «{category.name}» создан.')
+            return redirect(category.get_absolute_url())
+    else:
+        form = CategoryForm()
+    return render(request, 'board/new_category.html', {'form': form})
 
 
 def register(request):

@@ -5,6 +5,8 @@ from django.dispatch import receiver
 from django.urls import reverse
 from django.utils.text import slugify
 
+from .validators import validate_image_size
+
 
 class Profile(models.Model):
     NEWBIE = 'newbie'
@@ -21,8 +23,8 @@ class Profile(models.Model):
     ]
 
     user = models.OneToOneField(settings.AUTH_USER_MODEL, related_name='profile', on_delete=models.CASCADE)
-    avatar = models.ImageField('Аватар', upload_to='avatars/', blank=True)
-    bio = models.TextField('О себе', blank=True)
+    avatar = models.ImageField('Аватар', upload_to='avatars/', blank=True, validators=[validate_image_size])
+    bio = models.TextField('О себе', max_length=2000, blank=True)
     website = models.URLField('Сайт / портфолио', blank=True)
     github = models.URLField('GitHub', blank=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=NEWBIE)
@@ -112,7 +114,7 @@ class Topic(models.Model):
 class Post(models.Model):
     topic = models.ForeignKey(Topic, related_name='posts', on_delete=models.CASCADE)
     author = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='posts', on_delete=models.CASCADE)
-    body = models.TextField('Сообщение')
+    body = models.TextField('Сообщение', max_length=20000)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -125,7 +127,7 @@ class Post(models.Model):
 
 class PostImage(models.Model):
     post = models.ForeignKey(Post, related_name='images', on_delete=models.CASCADE)
-    image = models.ImageField('Изображение', upload_to='post_images/%Y/%m/')
+    image = models.ImageField('Изображение', upload_to='post_images/%Y/%m/', validators=[validate_image_size])
 
     def __str__(self):
         return f'Изображение к посту #{self.post_id}'

@@ -20,5 +20,7 @@ urlpatterns = [
     path('', include('board.urls')),
 ]
 
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# Served unconditionally (not just in DEBUG) because this app is deployed
+# without a separate web server (e.g. directly via gunicorn on a phone) —
+# there is nothing else in front of it to serve uploaded avatars/images.
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

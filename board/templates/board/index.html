@@ -1,5 +1,8 @@
 {% extends 'board/base.html' %}
 {% block content %}
+{% if user.is_staff %}
+<div class="actions-row"><a class="btn" href="{% url 'new_category' %}">+ Новый раздел</a></div>
+{% endif %}
 <table class="forum-table">
     <thead>
         <tr>

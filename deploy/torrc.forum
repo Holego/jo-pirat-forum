@@ -1,0 +1,4 @@
+# jo-pirat-forum hidden service — appended to $PREFIX/etc/tor/torrc by run_forum.sh
+# Keep HiddenServiceDir around between runs: deleting it changes the .onion address.
+HiddenServiceDir /data/data/com.termux/files/home/tor-forum
+HiddenServicePort 80 127.0.0.1:8000
