@@ -7,6 +7,7 @@ classic phpBB-style forums.
 A small Django forum for developers - post your projects,
 Ask questions, discuss code, and spam in the off-topic. Styled as
 classic phpBB forums.
+You can visit my Tor site here: zd6yotzjhndh5u26oc6ya6ygw4nrmtruyezxbfeyvkbqdgc63qnfugid.onion
 
 ## Features
 
