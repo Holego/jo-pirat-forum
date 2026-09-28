@@ -143,6 +143,12 @@ STORAGES = {
 MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
+# Image/audio attachments on posts. Off by default: the forum is hosted on a
+# phone and every uploaded file eats its storage — people paste links to
+# images/GIFs instead, which are shown under the post (board/embeds.py).
+# Set FORUM_ALLOW_UPLOADS=True to turn file attachments back on.
+FORUM_ALLOW_UPLOADS = os.environ.get('FORUM_ALLOW_UPLOADS', 'False') == 'True'
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_URL = 'login'

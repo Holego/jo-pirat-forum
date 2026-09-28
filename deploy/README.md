@@ -73,6 +73,11 @@ occasionally `> ~/.jo-pirat-forum/gunicorn.log` to clear it if it gets big.
 - `DJANGO_ALLOWED_HOSTS` defaults to `*` here since the only way in is via
   the `.onion` address anyway. Override it by exporting the env var before
   running the script if you want to lock it down further.
+- File attachments on posts (images/audio) are off by default so other
+  people's uploads can't fill up the phone's storage — media is shared as
+  direct links instead, and those are shown under the post. To allow
+  uploads anyway: `export FORUM_ALLOW_UPLOADS=True` before running
+  `run_forum.sh`.
 - The Django secret key is generated once into
   `~/.jo-pirat-forum/secret_key` (outside the git checkout) and reused on
   every subsequent run/update.

@@ -117,7 +117,7 @@ body {
 }
 .post-body { flex: 1; padding: 10px; }
 .post-meta { color: #999; font-size: 11px; margin-bottom: 6px; }
-.post-content { white-space: pre-wrap; line-height: 1.5; }
+.post-content { white-space: pre-wrap; line-height: 1.5; overflow-wrap: anywhere; }
 
 .author-link { display: flex; align-items: center; gap: 8px; text-decoration: none; color: #1f4e79; margin-bottom: 6px; }
 .author-link:hover { text-decoration: underline; }
@@ -173,6 +173,13 @@ body {
 .post-audio { margin-top: 10px; }
 .post-audio audio { display: block; max-width: 320px; width: 100%; margin-top: 6px; }
 
+.post-embeds { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; margin-top: 10px; }
+.post-embeds img, .post-embeds video {
+    display: block; max-width: 100%; max-height: 360px;
+    border: 1px solid #b8a677; border-radius: 3px;
+}
+.post-embeds audio { max-width: 320px; width: 100%; }
+
 .file-row { margin: 10px 0; font-size: 12px; color: #555; }
 
 .reply-form textarea, .std-form textarea, .std-form input {
@@ -199,4 +206,24 @@ body {
     color: #777;
     font-size: 12px;
     padding: 10px;
+}
+
+@media (max-width: 640px) {
+    .wrapper { padding: 0; }
+    .site-header { border-radius: 0; padding: 10px 12px; }
+    .logo-icon { font-size: 26px; }
+    .logo-text strong { font-size: 18px; }
+    .logo-text small { font-size: 11px; }
+    .topbar { flex-wrap: wrap; gap: 6px 14px; padding: 6px 10px; }
+    .topbar-user, .inline-form { margin-left: 0; }
+    .content { padding: 10px; }
+
+    .forum-table .col-num { display: none; }
+    .col-last { width: 40%; }
+
+    .post { flex-direction: column; gap: 0; }
+    .post-author { width: auto; display: flex; align-items: center; flex-wrap: wrap; gap: 8px; padding: 6px 10px; }
+    .author-link { margin-bottom: 0; }
+
+    .profile-card { flex-direction: column; }
 }

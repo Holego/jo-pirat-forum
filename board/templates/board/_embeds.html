@@ -1,0 +1,13 @@
+{% load forum_extras %}{% with embeds=text|media_embeds %}{% if embeds %}
+<div class="post-embeds">
+    {% for m in embeds %}
+        {% if m.kind == 'image' %}
+            <a href="{{ m.url }}" target="_blank" rel="noopener noreferrer nofollow"><img src="{{ m.url }}" alt="" loading="lazy"></a>
+        {% elif m.kind == 'video' %}
+            <video src="{{ m.url }}" controls loop muted playsinline preload="metadata"></video>
+        {% else %}
+            <audio src="{{ m.url }}" controls preload="none"></audio>
+        {% endif %}
+    {% endfor %}
+</div>
+{% endif %}{% endwith %}

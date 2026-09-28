@@ -15,7 +15,10 @@ You can visit my Tor site here: zd6yotzjhndh5u26oc6ya6ygw4nrmtruyezxbfeyvkbqdgc6
 - Registration and login
 - Profile: avatar, description, links (website, GitHub), status (Newbie / Member / Veteran / Moderator)
 - Topic creation with optional project link (GitHub, etc.)
-- Image attachments for posts and topics
+- Direct links to images / GIFs / video / audio in posts and private messages are shown
+  right under the message (nothing is stored on the server)
+- Optional file attachments for posts (off by default, `FORUM_ALLOW_UPLOADS=True` to enable)
+- Phone-friendly layout
 - User banning via the admin panel
 - Django admin interface for moderation
 

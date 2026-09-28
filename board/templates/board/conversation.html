@@ -22,7 +22,8 @@
     </div>
     <div class="post-body">
         <div class="post-meta">{{ msg.created_at|date:"d M Y H:i" }}</div>
-        <div class="post-content">{{ msg.body|linebreaks }}</div>
+        <div class="post-content">{{ msg.body|urlize|linebreaks }}</div>
+        {% include 'board/_embeds.html' with text=msg.body %}
     </div>
 </div>
 {% empty %}

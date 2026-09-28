@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -34,6 +35,15 @@ def category_detail(request, slug):
     category = get_object_or_404(Category, slug=slug)
     topics = category.topics.select_related('author').all()
     return render(request, 'board/category_detail.html', {'category': category, 'topics': topics})
+
+
+def _save_post_attachments(request, post):
+    # Uploads are off by default: the site runs on a phone and every file lands
+    # on its storage. Media is shared as links instead (see board/embeds.py).
+    if not settings.FORUM_ALLOW_UPLOADS:
+        return
+    _save_post_images(request, post)
+    _save_post_audio(request, post)
 
 
 def _save_post_images(request, post):
@@ -83,13 +93,14 @@ def topic_detail(request, slug, pk):
             post.topic = topic
             post.author = request.user
             post.save()
-            _save_post_images(request, post)
-            _save_post_audio(request, post)
+            _save_post_attachments(request, post)
             return redirect(topic.get_absolute_url() + f'#post-{post.pk}')
     else:
         form = PostForm()
 
-    return render(request, 'board/topic_detail.html', {'topic': topic, 'posts': posts, 'form': form})
+    return render(request, 'board/topic_detail.html', {
+        'topic': topic, 'posts': posts, 'form': form, 'allow_uploads': settings.FORUM_ALLOW_UPLOADS,
+    })
 
 
 @login_required
@@ -106,12 +117,13 @@ def new_topic(request, slug):
                 topic.author = request.user
                 topic.save()
                 post = Post.objects.create(topic=topic, author=request.user, body=form.cleaned_data['body'])
-                _save_post_images(request, post)
-                _save_post_audio(request, post)
+                _save_post_attachments(request, post)
             return redirect(topic.get_absolute_url())
     else:
         form = NewTopicForm()
-    return render(request, 'board/new_topic.html', {'category': category, 'form': form})
+    return render(request, 'board/new_topic.html', {
+        'category': category, 'form': form, 'allow_uploads': settings.FORUM_ALLOW_UPLOADS,
+    })
 
 
 @staff_required
