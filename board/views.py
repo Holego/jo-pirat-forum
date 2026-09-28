@@ -4,7 +4,6 @@ from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.models import User
 from django.db import transaction
-from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 
 from .forms import (
@@ -207,18 +206,7 @@ def user_list(request):
 
 @login_required
 def inbox(request):
-    thread_messages = PrivateMessage.objects.filter(
-        Q(sender=request.user) | Q(recipient=request.user)
-    ).select_related('sender', 'recipient').order_by('-created_at')
-
-    conversations = {}
-    for msg in thread_messages:
-        other = msg.recipient if msg.sender_id == request.user.id else msg.sender
-        entry = conversations.setdefault(other.id, {'user': other, 'last_message': msg, 'unread_count': 0})
-        if msg.recipient_id == request.user.id and not msg.is_read:
-            entry['unread_count'] += 1
-
-    conversation_list = sorted(conversations.values(), key=lambda c: c['last_message'].created_at, reverse=True)
+    conversation_list = PrivateMessage.conversations_for(request.user)
     return render(request, 'board/inbox.html', {'conversations': conversation_list})
 
 
@@ -242,11 +230,7 @@ def conversation(request, username):
     else:
         form = MessageForm()
 
-    thread = list(
-        PrivateMessage.objects.filter(
-            (Q(sender=request.user) & Q(recipient=other)) | (Q(sender=other) & Q(recipient=request.user))
-        ).select_related('sender', 'recipient').order_by('created_at')
-    )
+    thread = list(PrivateMessage.thread_between(request.user, other))
     PrivateMessage.objects.filter(sender=other, recipient=request.user, is_read=False).update(is_read=True)
 
     return render(request, 'board/conversation.html', {'other': other, 'thread': thread, 'form': form})

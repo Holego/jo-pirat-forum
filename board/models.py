@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.db import models
+from django.db.models import Q
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.urls import reverse
@@ -168,3 +169,25 @@ class PrivateMessage(models.Model):
 
     def __str__(self):
         return f'{self.sender} -> {self.recipient}'
+
+    @staticmethod
+    def thread_between(user, other):
+        return PrivateMessage.objects.filter(
+            (Q(sender=user) & Q(recipient=other)) | (Q(sender=other) & Q(recipient=user))
+        ).select_related('sender', 'recipient').order_by('created_at')
+
+    @staticmethod
+    def conversations_for(user):
+        """One entry per person `user` has talked to, most recent conversation first."""
+        thread_messages = PrivateMessage.objects.filter(
+            Q(sender=user) | Q(recipient=user)
+        ).select_related('sender', 'recipient', 'sender__profile', 'recipient__profile').order_by('-created_at')
+
+        conversations = {}
+        for msg in thread_messages:
+            other = msg.recipient if msg.sender_id == user.id else msg.sender
+            entry = conversations.setdefault(other.id, {'user': other, 'last_message': msg, 'unread_count': 0})
+            if msg.recipient_id == user.id and not msg.is_read:
+                entry['unread_count'] += 1
+
+        return sorted(conversations.values(), key=lambda c: c['last_message'].created_at, reverse=True)

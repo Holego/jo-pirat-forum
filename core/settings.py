@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'rest_framework.authtoken',
     'board',
 ]
 
@@ -150,6 +152,18 @@ MEDIA_ROOT = BASE_DIR / 'media'
 FORUM_ALLOW_UPLOADS = os.environ.get('FORUM_ALLOW_UPLOADS', 'False') == 'True'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# JSON API under /api/ (board/api_views.py), used by native/mobile clients.
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': ['rest_framework.permissions.IsAuthenticatedOrReadOnly'],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 30,
+    'DEFAULT_THROTTLE_RATES': {'auth': '30/min'},
+}
 
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'index'
